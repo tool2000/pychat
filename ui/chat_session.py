@@ -1,6 +1,7 @@
 import streamlit as st
 import logic.user_state as state
 import logic.utility as util
+import numpy as np
 from ui.ui_helpers import (chat_bottom_padding, chat_collapse_markdown_hidden_elements, right_align_2nd_col_tokenizer,
                            show_cancel_generate_button_js, set_chat_input_text,
                            embed_chat_input_tokenizer, hide_tokenzer_workaround_form,
@@ -41,6 +42,11 @@ def show_chat_session(chat_session: state.ChatSession, model: state.Model):
                                      avatar='ui/ai.png' if message['role'] == 'assistant'
                                      else ('ui/user.png' if message['role'] == 'user' else None)):
                     st.markdown(message['content'])
+                    # st.line_chart(np.random.randn(30, 3))
+                    # if isinstance(message['content'], np.ndarray):
+                    #     st.line_chart(message['content'])
+                    # else:
+                    #     st.markdown(message['content'])
 
         with st.container():
             if st.button('Cancel generation'):
@@ -171,6 +177,12 @@ def get_and_display_ai_reply(client, model: state.Model,
         message_placeholder.markdown(full_response)
         if not st.session_state['get_and_display_ai_reply_BREAK']:
             chat_session.add_message({'role': 'assistant', 'content': full_response})
+
+        # json 또는 numpy.array 형식으로 llm에 요청하고 full_response 로 리턴
+        # test = np.array([[ 7.52106732e-01, -4.78368599e-01, -7.90331612e-02], [-1.31742108e-01,  1.69789318e+00, -7.07223706e-01]])
+        # if not st.session_state['get_and_display_ai_reply_BREAK']:
+        #     chat_session.add_message({'role': 'assistant', 'content': test})        
+
         print('get_and_display_ai_reply - completing')
         return full_response
     finally:
